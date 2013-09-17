@@ -35,8 +35,11 @@ class CSVArchive:
             if unit_price:
                 default_values['unit_price'] = unit_price.quantize(
                     Decimal(1) / 10 ** ModelToImport.unit_price.digits[1])
-        values[model].update({x: default_values[x]
-                for x in default_values if '.' not in x})
+        for x in default_values:
+            if '.' not in x:
+                values[model].update({x: default_values[x]})
+#         values[model].update({x: default_values[x]
+#                 for x in default_values if '.' not in x})
         super(CSVArchive, cls)._add_default_values(csv_model, values)
 
     @classmethod
