@@ -18,16 +18,14 @@ class CSVArchive:
         ModelToImport = pool.get(model)
         Product = pool.get('product.product')
         default_values = {}
-        if model == 'sale.sale':
+        if model == 'sale.sale' and values[model].get('party'):
             Party = pool.get('party.party')
             party = Party(values[model]['party'])
             sale = ModelToImport()
             sale.party = party
             default_values = sale.on_change_party()
-        elif model == 'sale.line':
-            product = values[model].get('product')
-            if not product:
-                cls.raise_user_error('cant_update', error_args=(model,))
+        elif model == 'sale.line' and values[model].get('product'):
+            product = values[model]['product']
             default_values['description'] = product.name
             default_values['unit'] = product.sale_uom
             unit_price = Product.get_sale_price(
@@ -35,6 +33,9 @@ class CSVArchive:
             if unit_price:
                 default_values['unit_price'] = unit_price.quantize(
                     Decimal(1) / 10 ** ModelToImport.unit_price.digits[1])
+        elif model in ('sale.sale', 'sale.line'):
+            cls.raise_user_error('cant_update',
+                error_args=(model, values[model]))
         for x in default_values:
             if '.' not in x:
                 values[model].update({x: default_values[x]})
