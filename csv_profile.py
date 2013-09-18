@@ -28,6 +28,7 @@ class CSVArchive:
             product = values[model]['product']
             default_values['description'] = product.name
             default_values['unit'] = product.sale_uom
+            default_values['cost_price'] = product.cost_price
             unit_price = Product.get_sale_price(
                 [product], values[model]['quantity'] or 0)[product.id]
             if unit_price:
@@ -39,8 +40,6 @@ class CSVArchive:
         for x in default_values:
             if '.' not in x:
                 values[model].update({x: default_values[x]})
-#         values[model].update({x: default_values[x]
-#                 for x in default_values if '.' not in x})
         super(CSVArchive, cls)._add_default_values(csv_model, values)
 
     @classmethod
