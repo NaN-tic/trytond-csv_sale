@@ -1,7 +1,7 @@
 # This file is part of csv_sale module for Tryton.
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
-from trytond.tests.test_tryton import test_view, test_depends
+from trytond.tests.test_tryton import test_depends
 import os
 import sys
 import trytond.tests.test_tryton
