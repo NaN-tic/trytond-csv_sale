@@ -24,7 +24,6 @@ class CSVArchive:
             sale = ModelToImport()
             sale.party = party
             default_values = sale.on_change_party()
-            default_values['state'] = 'quotation'
         elif model == 'sale.line' and values[model].get('product'):
             product = values[model]['product']
             default_values['description'] = product.name
