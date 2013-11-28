@@ -24,6 +24,7 @@ class CSVArchive:
             sale = ModelToImport()
             sale.party = party
             default_values = sale.on_change_party()
+            default_values['state'] = 'quotation'
         elif model == 'sale.line' and values[model].get('product'):
             product = values[model]['product']
             default_values['description'] = product.name
@@ -38,7 +39,7 @@ class CSVArchive:
             cls.raise_user_error('cant_update',
                 error_args=(model, values[model]))
         for x in default_values:
-            if '.' not in x:
+            if x not in values[model] and '.rec_name' not in x:
                 values[model].update({x: default_values[x]})
         super(CSVArchive, cls)._add_default_values(csv_model, values)
 
