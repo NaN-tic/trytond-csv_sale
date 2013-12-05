@@ -16,7 +16,7 @@ class CSVArchive:
         '''
         Get default values from Sale and SaleLine objects
         '''
-        super(CSVArchive, cls)._add_default_values(model, values, parent_values)
+        values = super(CSVArchive, cls)._add_default_values(model, values, parent_values)
 
         pool = Pool()
         Sale = pool.get('sale.sale')
