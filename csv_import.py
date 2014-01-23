@@ -42,11 +42,12 @@ class CSVArchive:
                     company = Transaction().context.get('company')
                     if company:
                         currency = Company(company).currency.id
+                sale = Sale.get_sale_data(parent_values.get('party'))
                 values = {
                     'product': values.get('product'),
                     '_parent_sale.currency': currency,
                     '_parent_sale.party': parent_values.get('party'),
-                    'sale': None,
+                    'sale': sale,
                     'type': 'line',
                     'quantity': values.get('quantity'),
                     'unit': None,
