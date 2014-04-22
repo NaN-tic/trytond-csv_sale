@@ -31,6 +31,15 @@ class CSVArchive:
                 Party = pool.get('party.party')
                 party = Party(party)
                 model.party = party
+
+                if values.get('invoice_address'):
+                    if not values.get('invoice_address') in party.addresses:
+                        del values['invoice_address']
+
+                if values.get('shipment_address'):
+                    if not values.get('shipment_address') in party.addresses:
+                        del values['shipment_address']
+
                 vals = Sale(**values).on_change_party()
                 vals.update(values)
                 values = vals.copy()
