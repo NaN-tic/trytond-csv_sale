@@ -42,7 +42,7 @@ setup(name='%s_%s' % (PREFIX, MODULE),
     long_description=read('README'),
     author='Zikzakmedia SL',
     url='http://www.zikzakmedia.com/',
-    download_url="https://bitbucket.org/zikzakmedia/trytond-csv_sale",
+    download_url="https://bitbucket.org/zikzakmedia/trytond-%s" % MODULE,
     package_dir={'trytond.modules.%s' % MODULE: '.'},
     packages=[
         'trytond.modules.%s' % MODULE,
@@ -50,7 +50,7 @@ setup(name='%s_%s' % (PREFIX, MODULE),
         ],
     package_data={
         'trytond.modules.%s' % MODULE: (info.get('xml', [])
-            + ['tryton.cfg', 'locale/*.po']),
+            + ['tryton.cfg']),
         },
     classifiers=[
         'Development Status :: 5 - Production/Stable',
