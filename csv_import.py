@@ -2,7 +2,6 @@
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
 from trytond.pool import Pool, PoolMeta
-from trytond.transaction import Transaction
 
 __all__ = ['CSVArchive']
 __metaclass__ = PoolMeta
@@ -12,60 +11,48 @@ class CSVArchive:
     __name__ = 'csv.archive'
 
     @classmethod
-    def _add_default_values(cls, model, values, parent_values=None):
+    def _import_data_sale(cls, record, values, parent_values=None):
         '''
-        Get default values from Sale and SaleLine objects
+        Sale and Sale Line data
         '''
-        values = super(CSVArchive, cls)._add_default_values(model, values, parent_values)
-
         pool = Pool()
         Sale = pool.get('sale.sale')
         SaleLine = pool.get('sale.line')
-        Company = pool.get('company.company')
+        Party = pool.get('party.party')
 
-        model_name =  model.__name__
+        record_name = record.__name__
 
-        if model_name == 'sale.sale':
+        if record_name == 'sale.sale':
             party = values.get('party')
+
             if party:
-                Party = pool.get('party.party')
                 party = Party(party)
-                model.party = party
 
-                if values.get('invoice_address'):
-                    if not values.get('invoice_address') in party.addresses:
-                        del values['invoice_address']
+                if not record.id:
+                    record = Sale.get_sale_data(values.get('party'))
+                if values.get('invoice_address') \
+                        and values.get('invoice_address') in party.addresses:
+                    record.invoice_address = values.get('invoice_address') 
 
-                if values.get('shipment_address'):
-                    if not values.get('shipment_address') in party.addresses:
-                        del values['shipment_address']
+                if values.get('shipment_address') \
+                        and values.get('shipment_address') in party.addresses:
+                    record.shipment_address = values.get('shipment_address') 
 
-                vals = Sale(**values).on_change_party()
-                vals.update(values)
-                values = vals.copy()
+                if values.get('lines'):
+                    record.lines = values.get('lines')
 
-        if model_name == 'sale.line':
+                return record
+
+        if record_name == 'sale.line':
             if values.get('product') and values.get('quantity'):
-                currency = parent_values.get('currency')
-                if not currency:
-                    company = Transaction().context.get('company')
-                    if company:
-                        currency = Company(company).currency.id
                 sale = Sale.get_sale_data(parent_values.get('party'))
-                values = {
-                    'product': values.get('product'),
-                    '_parent_sale.currency': currency,
-                    '_parent_sale.party': parent_values.get('party'),
-                    'sale': sale,
-                    'type': 'line',
-                    'quantity': values.get('quantity'),
-                    'unit': None,
-                    'description': None
-                }
-                values.update(SaleLine(**values).on_change_product())
-                values.update(SaleLine(**values).on_change_quantity())
-                del values['_parent_sale.currency']
-                del values['_parent_sale.party']
-                del values['sale']
+                line = SaleLine.get_sale_line_data(
+                            sale,
+                            values.get('product'),
+                            values.get('quantity')
+                            )
+                line.on_change_product()
 
-        return values
+                return line
+
+        return record
