@@ -36,7 +36,10 @@ class CSVArchive:
 
                 if values.get('shipment_address') \
                         and values.get('shipment_address') in party.addresses:
-                    record.shipment_address = values.get('shipment_address') 
+                    record.shipment_address = values.get('shipment_address')
+
+                if values.get('customer_reference'):
+                    record.customer_reference = values.get('customer_reference')
 
                 if values.get('lines'):
                     record.lines = values.get('lines')
