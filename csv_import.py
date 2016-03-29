@@ -4,10 +4,10 @@
 from trytond.pool import Pool, PoolMeta
 
 __all__ = ['CSVArchive']
-__metaclass__ = PoolMeta
 
 
 class CSVArchive:
+    __metaclass__ = PoolMeta
     __name__ = 'csv.archive'
 
     @classmethod
