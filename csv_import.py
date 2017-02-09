@@ -30,9 +30,14 @@ class CSVArchive:
 
                 if not record.id:
                     record = Sale.get_sale_data(values.get('party'))
+
+                    if hasattr(record, 'shop') and not getattr(record, 'shop'):
+                        shop, = pool.get('sale.shop').search([], limit=1)
+                        record.shop = shop
+
                 if values.get('invoice_address') \
                         and values.get('invoice_address') in party.addresses:
-                    record.invoice_address = values.get('invoice_address') 
+                    record.invoice_address = values.get('invoice_address')
 
                 if values.get('shipment_address') \
                         and values.get('shipment_address') in party.addresses:
